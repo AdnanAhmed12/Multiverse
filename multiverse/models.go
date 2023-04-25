@@ -15,6 +15,7 @@ type Message struct {
 	StrongParents  MessageIDs
 	WeakParents    MessageIDs
 	SequenceNumber uint64
+	height         int
 	Issuer         network.PeerID
 	Payload        Color
 	IssuanceTime   time.Time

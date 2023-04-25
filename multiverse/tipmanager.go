@@ -23,12 +23,15 @@ type TipManager struct {
 	tsa                 TipSelector
 	tipSets             map[Color]*TipSet
 	msgProcessedCounter map[Color]uint64
+	strongTips          *randommap.RandomMap
 }
 
 func NewTipManager(tangle *Tangle, tsaString string) (tipManager *TipManager) {
 	tsaString = strings.ToUpper(tsaString) // make sure string is upper case
 	var tsa TipSelector
 	switch tsaString {
+	case "POW":
+		tsa = POW{}
 	case "URTS":
 		tsa = URTS{}
 	case "RURTS":
@@ -109,6 +112,21 @@ func (t *TipManager) TipSet(color Color) (tipSet *TipSet) {
 
 	return
 }
+func (t *TipManager) GetTip(messageID interface{}) (height int, true bool) {
+	// either create a new tipsset and copy over all tips
+	// then create a random map of that set
+	// msg, ok := t.strongTips.Get(messageID)
+	msg, _ := t.strongTips.Get(messageID)
+	if msg == nil {
+		// return 0 and false if msg interface is empty
+		return 0, false
+	} else {
+		msg := make([]Message, 1)
+		return msg[0].height, true
+	}
+	// else cast interface to Message type, index and return height
+
+}
 
 func (t *TipManager) Tips() (strongTips MessageIDs, weakTips MessageIDs) {
 	// The tips is selected form the tipSet of the current ownOpinion
@@ -157,22 +175,22 @@ func (t *TipManager) Tips() (strongTips MessageIDs, weakTips MessageIDs) {
 
 type TipSet struct {
 	strongTips *randommap.RandomMap
-	weakTips   *randommap.RandomMap
+	//weakTips   *randommap.RandomMap
 }
 
 func NewTipSet(tipsToInherit *TipSet) (tipSet *TipSet) {
 	tipSet = &TipSet{
 		strongTips: randommap.New(),
-		weakTips:   randommap.New(),
+		//weakTips:   randommap.New(),
 	}
 
 	if tipsToInherit != nil {
 		tipsToInherit.strongTips.ForEach(func(key interface{}, value interface{}) {
 			tipSet.strongTips.Set(key, value)
 		})
-		tipsToInherit.weakTips.ForEach(func(key interface{}, value interface{}) {
-			tipSet.weakTips.Set(key, value)
-		})
+		// tipsToInherit.weakTips.ForEach(func(key interface{}, value interface{}) {
+		// 	tipSet.weakTips.Set(key, value)
+		// })
 	}
 
 	return
@@ -184,14 +202,23 @@ func (t *TipSet) AddStrongTip(message *Message) {
 		t.strongTips.Delete(strongParent)
 	}
 
-	for weakParent := range message.WeakParents {
-		t.weakTips.Delete(weakParent)
-	}
+	// for weakParent := range message.WeakParents {
+	// 	t.weakTips.Delete(weakParent)
+	// }
 }
 
-func (t *TipSet) AddWeakTip(message *Message) {
-	t.weakTips.Set(message.ID, message)
-}
+// func (t *TipSet) AddWeakTip(message *Message) {
+// 	t.weakTips.Set(message.ID, message)
+// }
+
+// func (t *TipSet) GetTip(messageID interface{}) (interface{}, bool) {
+// 	// either create a new tipsset and copy over all tips
+// 	// then create a random map of that set
+// 	msg, ok := t.strongTips.Get(messageID)
+
+// 	return msg, ok
+
+// }
 
 func (t *TipSet) StrongTips(maxAmount int, tsa TipSelector) (strongTips MessageIDs) {
 	if t.strongTips.Size() == 0 {
@@ -207,18 +234,18 @@ func (t *TipSet) StrongTips(maxAmount int, tsa TipSelector) (strongTips MessageI
 	return
 }
 
-func (t *TipSet) WeakTips(maxAmount int, tsa TipSelector) (weakTips MessageIDs) {
-	if t.weakTips.Size() == 0 {
-		return
-	}
+// func (t *TipSet) WeakTips(maxAmount int, tsa TipSelector) (weakTips MessageIDs) {
+// 	if t.weakTips.Size() == 0 {
+// 		return
+// 	}
 
-	weakTips = make(MessageIDs)
-	for _, weakTip := range tsa.TipSelect(t.weakTips, maxAmount) {
-		weakTips.Add(weakTip.(*Message).ID)
-	}
+// 	weakTips = make(MessageIDs)
+// 	for _, weakTip := range tsa.TipSelect(t.weakTips, maxAmount) {
+// 		weakTips.Add(weakTip.(*Message).ID)
+// 	}
 
-	return
-}
+// 	return
+// }
 
 // endregion ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -227,6 +254,9 @@ func (t *TipSet) WeakTips(maxAmount int, tsa TipSelector) (weakTips MessageIDs) 
 // TipSelector defines the interface for a TSA
 type TipSelector interface {
 	TipSelect(tips *randommap.RandomMap, maxAmount int) []interface{}
+}
+type POW struct {
+	TipSelector
 }
 
 // URTS implements the uniform random tip selection algorithm
@@ -240,6 +270,21 @@ type RURTS struct {
 }
 
 // endregion ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+func (POW) TipSelect(tips *randommap.RandomMap, maxAmount int) []interface{} {
+
+	maxHeight := uint64(0)
+	var tipsToReturn []interface{}
+	tips.ForEach(func(key, value interface{}) {
+		if value.(*Message).height > int(maxHeight) {
+			tipsToReturn = make([]interface{}, 1)
+		}
+		tipsToReturn[0] = value
+	})
+
+	return tipsToReturn
+
+}
 
 // TipSelect selects maxAmount tips
 func (URTS) TipSelect(tips *randommap.RandomMap, maxAmount int) []interface{} {

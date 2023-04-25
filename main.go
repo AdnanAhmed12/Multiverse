@@ -334,6 +334,7 @@ func monitorNetworkState(testNetwork *network.Network) (resultsWriters []*csv.Wr
 	simulationStartTimeStr = simulationStartTime.UTC().Format(time.RFC3339)
 
 	// Dump the configuration of this simulation
+	print("dumping to file")
 	dumpConfig(fmt.Sprint("aw-", simulationStartTimeStr, ".config"))
 
 	// Dump the network information
@@ -800,7 +801,19 @@ func startSecurityWorker(peer *network.Peer, band float64) {
 					ticker.Reset(pace)
 				}
 			}
+			rand.Seed(time.Now().UnixNano())
+			// diff := rand.Float64()
+
+			// fmt.Println("difficulty:", diff)
+			// fmt.Println("pace:", pace)
+			// if pace >= time.Duration(diff) {
+			// 	fmt.Println("POW satisfied")
+			// 	sendMessage(peer)
+
+			// }
+
 			sendMessage(peer)
+
 		}
 	}
 }

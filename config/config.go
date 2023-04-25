@@ -4,7 +4,7 @@ package config
 
 var (
 	ResultDir                       = "results"   // Path where all the result files will be saved
-	SimulationTarget                = "DS"        // The simulation target, CT: Confirmation Time, DS: Double Spending
+	SimulationTarget                = "CT"        // The simulation target, CT: Confirmation Time, DS: Double Spending
 	SimulationStopThreshold         = 1.0         // Stop the simulation when > SimulationStopThreshold * NodesCount have reached the same opinion.
 	ConsensusMonitorTick            = 100         // Tick to monitor the consensus, in milliseconds.
 	MonitoredAWPeers                = [...]int{0} // Nodes for which we monitor the AW growth
@@ -15,9 +15,9 @@ var (
 // Network setup
 
 var (
-	NodesCount       = 100       // NodesCount is the total number of nodes simulated in the network.
+	NodesCount       = 10        // NodesCount is the total number of nodes simulated in the network.
 	TPS              = 100       // TPS defines the total network throughput.
-	ParentsCount     = 8         // ParentsCount that a new message is selecting from the tip pool.
+	ParentsCount     = 1         // ParentsCount that a new message is selecting from the tip pool.
 	NeighbourCountWS = 8         // Number of neighbors node is connected to in WattsStrogatz network topology.
 	RandomnessWS     = 1.0       // WattsStrogatz randomness parameter, gamma parameter described in https://blog.iota.org/the-fast-probabilistic-consensus-simulator-d5963c558b6e/
 	IMIF             = "poisson" // IMIF Inter Message Issuing Function for time delay between activity messages: poisson or uniform.
@@ -31,19 +31,19 @@ var (
 // Weight setup
 
 var (
-	NodesTotalWeight              = 100_000_000 // Total number of weight for the whole network.
-	ZipfParameter                 = 0.9         // the 's' parameter for the Zipf distribution used to model weight distribution. s=0 all nodes are equal, s=2 network centralized.
-	ConfirmationThreshold         = 0.66        // Threshold for AW collection above which messages are considered confirmed.
-	ConfirmationThresholdAbsolute = true        // If true the threshold is alway counted from zero if false the weight collected is counted from the next peer weight.
-	RelevantValidatorWeight       = 0           // The node whose weight * RelevantValidatorWeight <= largestWeight will not issue messages (disabled now)
+	NodesTotalWeight              = 100_000 //_000 // Total number of weight for the whole network.
+	ZipfParameter                 = 0.8     // the 's' parameter for the Zipf distribution used to model weight distribution. s=0 all nodes are equal, s=2 network centralized.
+	ConfirmationThreshold         = 0.66    // Threshold for AW collection above which messages are considered confirmed.
+	ConfirmationThresholdAbsolute = true    // If true the threshold is alway counted from zero if false the weight collected is counted from the next peer weight.
+	RelevantValidatorWeight       = 0       // The node whose weight * RelevantValidatorWeight <= largestWeight will not issue messages (disabled now)
 )
 
 // Tip Selection Algorithm setup
 
 var (
-	TSA           = "URTS" // Currently only one supported TSA is URTS
-	DeltaURTS     = 5.0    // in seconds, reference: https://iota.cafe/t/orphanage-with-restricted-urts/1199
-	WeakTipsRatio = 0.0    // The ratio of weak tips
+	TSA           = "POW" // Currently only one supported TSA is URTS
+	DeltaURTS     = 5.0   // in seconds, reference: https://iota.cafe/t/orphanage-with-restricted-urts/1199
+	WeakTipsRatio = 0.0   // The ratio of weak tips
 )
 
 // Adversary setup - enabled by setting SimulationTarget="DS"
