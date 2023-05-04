@@ -32,11 +32,14 @@ func (m *MessageFactory) CreateMessage(payload Color) (message *Message) {
 		sp = s
 	}
 	if sp != Genesis {
-		sp := make([]interface{}, 1)
-		height, ok := m.tangle.TipManager.GetTip(sp)
+		if m.tangle.TipManager.strongTips == nil {
+			println("Strong tips is nil")
+
+		}
+		msg, ok := m.tangle.TipManager.GetTip(sp)
 
 		if ok {
-			parentheight = height
+			parentheight = msg
 		}
 
 	}

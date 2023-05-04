@@ -112,13 +112,16 @@ func (t *TipManager) TipSet(color Color) (tipSet *TipSet) {
 
 	return
 }
+
 func (t *TipManager) GetTip(messageID interface{}) (height int, true bool) {
 	// either create a new tipsset and copy over all tips
 	// then create a random map of that set
 	// msg, ok := t.strongTips.Get(messageID)
 	msg, _ := t.strongTips.Get(messageID)
+	println("got msg")
 	if msg == nil {
 		// return 0 and false if msg interface is empty
+
 		return 0, false
 	} else {
 		msg := make([]Message, 1)
@@ -195,6 +198,24 @@ func NewTipSet(tipsToInherit *TipSet) (tipSet *TipSet) {
 
 	return
 }
+
+// func (t *TipSet) GetTip(messageID interface{}) (height int, true bool) {
+// 	// either create a new tipsset and copy over all tips
+// 	// then create a random map of that set
+// 	// msg, ok := t.strongTips.Get(messageID)
+// 	msg, _ := t.strongTips.Get(messageID)
+// 	println("got msg")
+// 	if msg == nil {
+// 		// return 0 and false if msg interface is empty
+
+// 		return 0, false
+// 	} else {
+// 		msg := make([]Message, 1)
+// 		return msg[0].height, true
+// 	}
+// 	// else cast interface to Message type, index and return height
+
+// }
 
 func (t *TipSet) AddStrongTip(message *Message) {
 	t.strongTips.Set(message.ID, message)
