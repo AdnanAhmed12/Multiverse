@@ -132,7 +132,7 @@ func (t *TipManager) GetTip(messageID interface{}) (height int, true bool) {
 }
 
 func (t *TipManager) Tips() (strongTips MessageIDs, weakTips MessageIDs) {
-	// The tips is selected form the tipSet of the current ownOpinion
+	// The tips is selected from the tipSet of the current ownOpinion
 	tipSet := t.TipSet(t.tangle.OpinionManager.Opinion())
 
 	strongTips = tipSet.StrongTips(config.ParentsCount, t.tsa)
@@ -295,12 +295,15 @@ type RURTS struct {
 func (POW) TipSelect(tips *randommap.RandomMap, maxAmount int) []interface{} {
 
 	maxHeight := uint64(0)
+	var msg *Message
 	var tipsToReturn []interface{}
 	tips.ForEach(func(key, value interface{}) {
 		if value.(*Message).height > int(maxHeight) {
 			tipsToReturn = make([]interface{}, 1)
+			maxHeight = uint64(value.(*Message).height)
+			msg = value.(*Message)
 		}
-		tipsToReturn[0] = value
+		tipsToReturn[0] = msg
 	})
 
 	return tipsToReturn
