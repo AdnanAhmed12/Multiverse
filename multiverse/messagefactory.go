@@ -22,7 +22,7 @@ func NewMessageFactory(tangle *Tangle, numberOfNodes uint64) (messageFactory *Me
 
 func (m *MessageFactory) CreateMessage(payload Color) (message *Message) {
 	//strongParents, weakParents := m.tangle.TipManager.Tips()
-	strongParents, _ := m.tangle.TipManager.Tips()
+	strongParents := m.tangle.TipManager.Tips()
 	parentheight := 0
 	// if strongParents.GetOne() != genesis {
 	// 	parentheight = getmessage(strongParents.GetOne()).height
@@ -32,8 +32,12 @@ func (m *MessageFactory) CreateMessage(payload Color) (message *Message) {
 		sp = s
 	}
 	if sp != Genesis {
-		if m.tangle.TipManager.strongTips == nil {
-			println("Strong tips is nil")
+		if strongParents == nil {
+			println("Strong Parent is nil")
+
+		}
+		if m.tangle.TipManager == nil {
+			println("TipManager is nil")
 
 		}
 		msg, ok := m.tangle.TipManager.GetTip(sp)

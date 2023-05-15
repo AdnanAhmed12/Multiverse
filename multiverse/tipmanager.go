@@ -23,7 +23,6 @@ type TipManager struct {
 	tsa                 TipSelector
 	tipSets             map[Color]*TipSet
 	msgProcessedCounter map[Color]uint64
-	strongTips          *randommap.RandomMap
 }
 
 func NewTipManager(tangle *Tangle, tsaString string) (tipManager *TipManager) {
@@ -117,10 +116,14 @@ func (t *TipManager) GetTip(messageID interface{}) (height int, true bool) {
 	// either create a new tipsset and copy over all tips
 	// then create a random map of that set
 	// msg, ok := t.strongTips.Get(messageID)
-	msg, _ := t.strongTips.Get(messageID)
-	println("got msg")
+	tipSet := t.TipSet(t.tangle.OpinionManager.Opinion())
+	// strongTips := tipSet.StrongTips(config.ParentsCount, t.tsa)
+	// ST := t.Tips()
+	msg, _ := tipSet.strongTips.Get(messageID)
+
 	if msg == nil {
 		// return 0 and false if msg interface is empty
+		println("msg is nil")
 
 		return 0, false
 	} else {
@@ -131,7 +134,7 @@ func (t *TipManager) GetTip(messageID interface{}) (height int, true bool) {
 
 }
 
-func (t *TipManager) Tips() (strongTips MessageIDs, weakTips MessageIDs) {
+func (t *TipManager) Tips() (strongTips MessageIDs) {
 	// The tips is selected from the tipSet of the current ownOpinion
 	tipSet := t.TipSet(t.tangle.OpinionManager.Opinion())
 
