@@ -40,6 +40,10 @@ func (m *MessageFactory) CreateMessage(payload Color) (message *Message) {
 			println("TipManager is nil")
 
 		}
+		if m.tangle.TipManager == nil {
+			println("Tipmanager is nil")
+
+		}
 		msg, ok := m.tangle.TipManager.GetTip(sp)
 
 		if ok {
