@@ -1,0 +1,6 @@
+Etter kode forandringer i Approval weight manager
+
+python3 main.py -rs -pf -v N -vv 100 200 300 -df 1 -pf -rt 5 -st CT
+
+TPS = 70
+CONF Threshold = 10

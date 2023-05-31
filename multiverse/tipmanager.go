@@ -113,25 +113,18 @@ func (t *TipManager) TipSet(color Color) (tipSet *TipSet) {
 }
 
 func (t *TipManager) GetTip(messageID interface{}) (height int, true bool) {
-	// either create a new tipsset and copy over all tips
-	// then create a random map of that set
-	// msg, ok := t.strongTips.Get(messageID)
 	tipSet := t.TipSet(t.tangle.OpinionManager.Opinion())
-	// strongTips := tipSet.StrongTips(config.ParentsCount, t.tsa)
-	// ST := t.Tips()
 	msg, _ := tipSet.strongTips.Get(messageID)
-
 	if msg == nil {
 		// return 0 and false if msg interface is empty
 		println("msg is nil")
-
 		return 0, false
 	} else {
+		// else cast interface to Message type, index and return height
 		msg := make([]Message, 1)
 		return msg[0].height, true
 	}
 	// else cast interface to Message type, index and return height
-
 }
 
 func (t *TipManager) Tips() (strongTips MessageIDs) {
