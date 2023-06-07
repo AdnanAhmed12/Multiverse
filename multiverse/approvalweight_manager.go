@@ -49,7 +49,7 @@ func (a *ApprovalManager) ApproveMessages(messageID MessageID) {
 		if count <= weight {
 			count++
 			a.Events.MessageWeightUpdated.Trigger(message, messageMetadata, messageMetadata.weight)
-			if float64(messageMetadata.weight) >= 10 {
+			if float64(messageMetadata.weight) >= 50 && messageMetadata.confirmationTime.IsZero() {
 				messageMetadata.confirmationTime = time.Now()
 				a.Events.MessageConfirmed.Trigger(message, messageMetadata, messageMetadata.weight, messageIDCounter)
 			}

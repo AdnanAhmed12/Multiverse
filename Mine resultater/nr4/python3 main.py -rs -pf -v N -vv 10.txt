@@ -1,0 +1,5 @@
+python3 main.py -rs -pf -v N -vv 100 200 300 -df 1 -rt 5 -st CT
+
+TPS = 100
+Threshold = 24
+zipf = 0.8

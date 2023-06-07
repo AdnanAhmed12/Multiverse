@@ -16,7 +16,7 @@ var (
 
 var (
 	NodesCount       = 10        // NodesCount is the total number of nodes simulated in the network.
-	TPS              = 100       // TPS defines the total network throughput.
+	TPS              = 50        // TPS defines the total network throughput.
 	ParentsCount     = 1         // ParentsCount that a new message is selecting from the tip pool.
 	NeighbourCountWS = 8         // Number of neighbors node is connected to in WattsStrogatz network topology.
 	RandomnessWS     = 1.0       // WattsStrogatz randomness parameter, gamma parameter described in https://blog.iota.org/the-fast-probabilistic-consensus-simulator-d5963c558b6e/
@@ -32,7 +32,7 @@ var (
 
 var (
 	NodesTotalWeight              = 100_000 //_000 // Total number of weight for the whole network.
-	ZipfParameter                 = 0.8     // the 's' parameter for the Zipf distribution used to model weight distribution. s=0 all nodes are equal, s=2 network centralized.
+	ZipfParameter                 = 0.9     // the 's' parameter for the Zipf distribution used to model weight distribution. s=0 all nodes are equal, s=2 network centralized.
 	ConfirmationThreshold         = 0.66    // Threshold for AW collection above which messages are considered confirmed.
 	ConfirmationThresholdAbsolute = true    // If true the threshold is alway counted from zero if false the weight collected is counted from the next peer weight.
 	RelevantValidatorWeight       = 0       // The node whose weight * RelevantValidatorWeight <= largestWeight will not issue messages (disabled now)

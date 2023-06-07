@@ -1,3 +1,0 @@
-CONF Threshold = 10
-TPS = 120
-python3 main.py -rs -pf -v N -vv 100 200 300 -df 1 -pf -rt 5 -st CT

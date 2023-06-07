@@ -29,7 +29,7 @@ var (
 	log = logger.New("Simulation")
 
 	// csv
-	awHeader = []string{"Message ID", "Issuance Time (unix)", "Confirmation Time (ns)", "Weight", "# of Confirmed Messages",
+	awHeader = []string{"Message ID", "Issuance Time (unix)", "Confirmation Time (ns)", "ParentID", "# of Confirmed Messages",
 		"# of Issued Messages", "ns since start"}
 	wwHeader = []string{"Witness Weight", "Time (ns)"}
 	dsHeader = []string{"UndefinedColor", "Blue", "Red", "Green", "ns since start", "ns since issuance"}
@@ -416,13 +416,17 @@ func monitorNetworkState(testNetwork *network.Network) (resultsWriters []*csv.Wr
 				confirmedMessageMutex.Lock()
 				confirmedMessageCounter[awPeer.ID]++
 				confirmedMessageMutex.Unlock()
+				var p uint64
+				for s := range message.StrongParents {
+					p = uint64(s)
+				}
 
 				confirmedMessageMutex.RLock()
 				record := []string{
 					strconv.FormatInt(int64(message.ID), 10),
 					strconv.FormatInt(message.IssuanceTime.Unix(), 10),
 					strconv.FormatInt(int64(messageMetadata.ConfirmationTime().Sub(message.IssuanceTime)), 10),
-					strconv.FormatUint(weight, 10),
+					strconv.FormatUint(p, 10),
 					strconv.FormatInt(confirmedMessageCounter[awPeer.ID], 10),
 					strconv.FormatInt(messageIDCounter, 10),
 					strconv.FormatInt(time.Since(simulationStartTime).Nanoseconds(), 10),
